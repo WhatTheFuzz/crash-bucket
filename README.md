@@ -47,17 +47,17 @@ same defective output. There are a few ways to do bucketing:
   space is randomized, your program counter might be different. If you don't
   have source code or debug symbols, you probably can't get line-level
   granularity.
-- Coverage Profiles - Determines uniqueness based on edge coverage. Sensitive
+- Coverage Profiles - Determines uniqueness based on edge coverage. Sensitive to
   changes in the path en-route to the root vulnerability. For example, consider
-  two test cases. One results in the edge tuple tuples AB→BD. The other results
-  in the edge tuples AB→BC→CD. Both cause the same crash (potentially, stack
-  trace as well). This will lead to two test cases that are "unique" but
-  actually trigger the same bug. Sometimes you want this, sometime you don't.
+  two test cases. One results in the edge tuples AB→BD. The other results in the
+  edge tuples AB→BC→CD. Both cause the same crash (potentially, stack trace as
+  well). This will lead to two test cases that are "unique" but actually trigger
+  the same bug. Sometimes you want this, sometime you don't.
 - Stack Hashing - Similar to Coverage Profiles. Records the last *n* stack
   frames leading up to the crash. This provides a path to the crash and is
   similarly sensitive to differences in execution path.
 
-The current algorithm in this project is utilizing crash sites. This is pretty
+The current algorithm in this project utilizes crash sites. This is pretty
 naive, but fairly effective for simple bugs. It may not work well with
 use-after-frees or other bug classes that can be triggered far beyond their
 scope.
