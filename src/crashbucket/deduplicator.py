@@ -17,6 +17,19 @@ def deduplicate(input: Path, output: Path, executable: ELF, args: list[str]):
 
     faulting_lines: set[str] = set()
 
+    # If @@ is not in the args, we pass in files via stdin.
+    stdin = '@@' not in args
+
+    if stdin:
+        log.info('Configured to pass in files via stdin. If this is incorrect, '
+                 'please use @@ in the arguments to the executable or file an '
+                 'issue on GitHub.')
+    else:
+        log.info('Configured to pass in files via arguments. If this is '
+                 'incorrect, please remove the @@ in the arguments to the '
+                 'or file an issue on GitHub.')
+
+
     # For each file in the input directory.
     for file in input.iterdir():
 
@@ -25,10 +38,11 @@ def deduplicate(input: Path, output: Path, executable: ELF, args: list[str]):
         # If @@ is in the args, replace it with the input file.
         if '@@' in args:
             args[args.index('@@')] = str(file)
+            stdin = False
 
         # Create the debugger.
         debugger: lldb.SBDebugger = lldb.SBDebugger.Create()
-        debugger.SetAsync(False)
+        debugger.SetAsync(True)
 
         # Create the target.
         target: lldb.SBTarget = debugger.CreateTargetWithFileAndArch(filename=executable.path, archname=lldb.LLDB_ARCH_DEFAULT)
@@ -41,6 +55,7 @@ def deduplicate(input: Path, output: Path, executable: ELF, args: list[str]):
         launch_info = target.GetLaunchInfo()
         launch_info.SetArguments(args, append=True)
         launch_info.SetExecutableFile(exe_file=lldb.SBFileSpec(executable.path), add_as_first_arg=True)
+
 
         # Create an empty SBError to pass to the target.
         error: lldb.SBError = lldb.SBError()
@@ -57,18 +72,22 @@ def deduplicate(input: Path, output: Path, executable: ELF, args: list[str]):
                 log.info('This is an Ubuntu package error. Create a symlink for lldb-server-X.0.0 that points to lldb-server-X. Replace X with the version numbers.')
             exit(1)
 
+        # If the process reads from stdin, open the file and pass it in.
+        if stdin:
+            with open(file, 'rb') as f:
+                process.PutSTDIN(f.read())
+
         # Get the crashing frame.
-        frame: lldb.SBFrame =process.GetThreadAtIndex(0).GetFrameAtIndex(0)
+        frame: lldb.SBFrame = process.GetThreadAtIndex(0).GetFrameAtIndex(0)
         line: lldb.SBLineEntry = frame.GetLineEntry()
 
         # Check if we've seen this line before.
         if str(line) not in faulting_lines:
             faulting_lines.add(str(line))
-            log.success(f'Found new faulting line: {line.GetLine()}')
+            log.success(f'Found new faulting line: {line.GetLine()} with input: {file}')
 
             # Copy the file to the output directory.
             shutil.copy(src=file, dst=output)
-
 
 
 def main() -> None:

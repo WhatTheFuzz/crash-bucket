@@ -1,2 +1,4 @@
+# Python package artifacts.
 build/
 dist/
+*.egg*/
