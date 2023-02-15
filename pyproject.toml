@@ -1,5 +1,5 @@
 [project]
-name = "crash-dedup"
+name = "crash-bucket"
 version = "0.0.1"
 authors = [
     {name = "Sean Deaton"}
@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.scripts]
-crash-dedup = "dedup.deduplicator:main"
+crash-bucket = "crashbucket.deduplicator:main"
 
 [project.urls]
 "Homepage" = "https://github.com/WhatTheFuzz/afl-lldb-deduplicator"

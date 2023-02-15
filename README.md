@@ -1,4 +1,4 @@
-# AFL LLDB Deduplicator
+# Crash Bucket
 
 Iterates over a directory of crashing inputs and deduplicates the crashes. The
 current algorithm just uses the source file, function name, and line number to
@@ -19,7 +19,7 @@ It requires three arguments:
 An example:
 
 ```shell
-$ python3 ./deduplicator.py -i ./output/default/crashes -o ./min/ <path-to-target> @@
+$ crash-bucket -i ./output/default/crashes -o ./min/ <path-to-target> @@
 
 [*] '<path to program>'
     Arch:     amd64-64-little
