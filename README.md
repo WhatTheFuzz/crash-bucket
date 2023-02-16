@@ -37,6 +37,21 @@ the verbosity by turning on debug messages by setting the environment variable
 `PWNLIB_DEBUG=1`. Debugging messages will show you what input the deduplicator
 is currently checking.
 
+## Installation
+
+There are two methods to use `crash-bucket`. You can install it with `pip3`
+(recommended) or use the standalone python file
+[dedeuplicator.py](./src/crashbucket/deduplicator.py).
+
+```shell
+# Clone this repo.
+git clone https://github.com/WhatTheFuzz/crash-bucket.git
+# Install using pip
+pip3 install .
+# Check the path.
+which crash-bucket
+```
+
 ## Crash Bucketing
 
 Crash bucketing is the processes of grouping crashing inputs that lead to the
