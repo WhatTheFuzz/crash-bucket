@@ -34,9 +34,26 @@ noreturn int d(void) {
 
 int main(int argc, char ** argv) {
 
-    /* Read from stdin. */
     char buf[256];
-    fgets(buf, sizeof(buf)-1, stdin);
+    FILE  * fp;
+
+#ifdef STDIN
+    fp = stdin;
+#else
+    /* Check the number of arguments.*/
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <file>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    /* Open the file. */
+    if ((fp = fopen(argv[1], "r")) == NULL) {
+        perror("fopen");
+        exit(EXIT_FAILURE);
+    }
+#endif
+
+    fgets(buf, sizeof(buf)-1, fp);
 
     /* Check what the buffer starts with. */
     if (strchr(buf, 'a') != NULL){
