@@ -1,4 +1,11 @@
-# Python package artifacts.
-build/
-dist/
-*.egg*/
+# Ignore everything.
+*
+
+!.gitignore
+!LICENSE
+!pyproject.toml
+!README.md
+!examples/
+
+!src/main.c
+!src/README.md
