@@ -32,8 +32,11 @@ noreturn int d(void) {
     abort();
 }
 
+#ifdef STDIN
+int main(__attribute__((unused)) int argc, __attribute__((unused)) char ** argv) {
+#else
 int main(int argc, char ** argv) {
-
+#endif
     char buf[256];
     FILE  * fp;
 
