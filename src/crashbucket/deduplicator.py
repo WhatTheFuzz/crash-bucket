@@ -93,7 +93,7 @@ def deduplicate(input: Path, output: Path, executable: ELF, args: list[str]):
 def main() -> None:
     '''Parse arguments and ensure that directories and the executable exist.'''
     parser: ArgumentParser = ArgumentParser(
-                    prog = 'AFL Deduplicator',
+                    prog = 'crash-bucket',
                     description = 'Runs all of the crashing input with the \
                                    program and removes duplicate crashes.')
     # Input directory of crashing inputs.
@@ -108,7 +108,8 @@ def main() -> None:
                               Will not overwrite existing directory.",
                         type=Path)
     # Path to the executable and how to call it.
-    parser.add_argument('executable', type=str, nargs='+')
+    parser.add_argument('executable', type=str, nargs='+',
+                        help='Path to the executable and how to call it.')
     # Parse the user arguments.
     args: Namespace = parser.parse_args()
 
