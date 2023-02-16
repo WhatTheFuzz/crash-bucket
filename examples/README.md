@@ -1,11 +1,11 @@
 # STDIN Example
 
-Most fuzzers permit passing data from a file or through stdin. This example
-shows how to deduplicate crashing input given through stdin.
+Most fuzzers permit passing data from a file or through stdin. `main.c` can be
+compiled to show both methods of providing input.
 
 ## The Example Program
 
-The program just checks the first 255 bytes passed into the stdin for the
+The program just checks the first 255 bytes passed into the stdin/file for the
 characters `a`, `b`, `c`, and `d`. Each character calls a mapped function:
 
 - `a`: calls `a(void)`, simply `puts` and returns.
@@ -25,10 +25,12 @@ scale for much, much larger projects.
 ## Fuzzing
 
 ```shell
-# Compile the program with AFL's clang-fast or clang-lto
-$ afl-clang-fast -glldb -Og -fno-omit-frame-pointer -fno-inline-functions main.c -std=c17 -o main
-# Start fuzzing.
-$ afl-fuzz -i ./input -o ./output main
+# `make` will compile `main.c` into `file and `stdin`.
+$ make
+# Start fuzzing stdin.
+$ afl-fuzz -i ./input -o ./output stdin
+# ...or fuzz argv[1].
+$ afl-fuzz -i ./input -o ./output file @@
 ```
 
 You should immediately wind up with four crashes in
@@ -44,6 +46,8 @@ the *input* to `crash-bucket`.
 ```shell
 # Look in the input directory for the crashing test cases.
 # Deduplicate this crashes and place the results in ./deduplicated-crashes.
-# The program is called `main`, takes no arguments, and reads from `stdin`.
-$ crash-bucket --input ./output/default/crashes --output ./deduplicated-crashes ./main
+$ crash-bucket --input ./output/default/crashes --output ./deduplicated-crashes ./stdin
+# ...or deduplicate for `file`.
+# Deduplicate this crashes and place the results in ./deduplicated-crashes.
+$ crash-bucket --input ./output/default/crashes --output ./deduplicated-crashes ./file @@
 ```
